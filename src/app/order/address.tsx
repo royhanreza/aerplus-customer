@@ -1,13 +1,6 @@
 import { useCustomerStore } from "@/src/store/customer";
 import { useOutletStore } from "@/src/store/outlet";
-import {
-  RiArrowDropRightLine,
-  RiArrowRightLine,
-  RiMapLine,
-  RiMapPinLine,
-  RiTruckLine,
-} from "@remixicon/react";
-import Link from "next/link";
+import { RiMapPinLine, RiTruckLine } from "@remixicon/react";
 
 export default function OrderAddress() {
   const customer = useCustomerStore((state) => state.customer);

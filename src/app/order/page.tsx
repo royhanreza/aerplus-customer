@@ -6,14 +6,13 @@ import {
   RiFileListLine,
   RiCheckboxMultipleLine,
   RiArrowLeftLine,
-  RiListCheck2,
 } from "@remixicon/react";
 
 import { Slide, ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Product from "./product";
-import { useOrderStore } from "@/src/store/order";
-import { useEffect, useMemo, useState } from "react";
+import { OrderState, useOrderStore } from "@/src/store/order";
+import { useMemo } from "react";
 import {
   Customer,
   Product as IProduct,
@@ -22,8 +21,8 @@ import {
   OutletSaleOrderDto,
   OutletSaleOrderItemDto,
 } from "@/src/interface";
-import { useOutletStore } from "@/src/store/outlet";
-import { useCustomerStore } from "@/src/store/customer";
+import { OutletState, useOutletStore } from "@/src/store/outlet";
+import { CustomerState, useCustomerStore } from "@/src/store/customer";
 import OrderAddress from "./address";
 import OrderPaymentMethod from "./payment-method";
 import { useMutation } from "@tanstack/react-query";
@@ -34,24 +33,28 @@ import dayjs from "dayjs";
 
 export default function Order() {
   const products: IProduct[] = useOrderStore(
-    (state: unknown) => state.products
+    (state: OrderState) => state.products
   );
-  const note: string = useOrderStore((state: any) => state.note);
-  const customer: Customer = useCustomerStore((state: any) => state.customer);
-  const outlet: Outlet = useOutletStore((state: any) => state.outlet);
+  const note: string = useOrderStore((state: OrderState) => state.note);
+  const customer: Customer | null = useCustomerStore(
+    (state: CustomerState) => state.customer
+  );
+  const outlet: Outlet | null = useOutletStore(
+    (state: OutletState) => state.outlet
+  );
   const paymentMethod: string = useOrderStore(
-    (state: any) => state.paymentMethod
+    (state: OrderState) => state.paymentMethod
   );
 
-  const setNote = useOrderStore((state: any) => state.setNote);
+  const setNote = useOrderStore((state: OrderState) => state.setNote);
   const selectedProducts: { [key: string]: number } = useOrderStore(
-    (state: any) => state.selectedProducts
+    (state: OrderState) => state.selectedProducts
   );
 
   const productAmount: number = useMemo<number>(() => {
     return Number(
       Object.values(selectedProducts).reduce(
-        (acc: any, cur: any) => acc + cur,
+        (acc: number, cur: number) => acc + cur,
         0
       )
     );
@@ -128,12 +131,12 @@ export default function Order() {
       total: totalOrder,
       payment_method: paymentMethod,
       note: note,
-      customer_id: customer.id,
-      outlet_id: outlet.id,
+      customer_id: customer?.id ?? null,
+      outlet_id: outlet?.id ?? null,
       goods: orderItems,
-      recipient_name: customer.name,
-      recipient_phone: customer.phone,
-      recipient_address: customer.address,
+      recipient_name: customer?.name ?? null,
+      recipient_phone: customer?.phone ?? null,
+      recipient_address: customer?.address ?? null,
     });
   };
 
@@ -145,12 +148,6 @@ export default function Order() {
 
   // const [orderNote, setOrderNote] = useState<string>("");
   // const [paymentMethod, setPaymentMethod] = useState<string>("tunai");
-  const [hasHistory, setHasHistory] = useState(false);
-
-  useEffect(() => {
-    // Cek window.history setelah komponen di-mount (client-side)
-    setHasHistory(window.history.length > 1);
-  }, []);
 
   return (
     <html lang="en" data-theme="lofi">

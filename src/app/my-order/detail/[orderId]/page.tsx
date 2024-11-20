@@ -12,12 +12,9 @@ import {
   RiContrastDropLine,
   RiFileDamageLine,
   RiHourglassLine,
-  RiImageAddLine,
-  RiImageLine,
   RiMapPinLine,
   RiSecurePaymentLine,
   RiShoppingBag4Fill,
-  RiShoppingBag4Line,
   RiTimeLine,
   RiTruckLine,
 } from "@remixicon/react";
@@ -140,7 +137,7 @@ export default function OrderDetail() {
     setIsViewerOpen(false);
   };
 
-  const { isPending, isError, data, error, refetch, isRefetching } = useQuery<
+  const { isPending, data, refetch, isRefetching } = useQuery<
     AxiosResponse<SuccessResponse<OutletSaleOrder>>,
     AxiosError<ErrorResponse>
   >({

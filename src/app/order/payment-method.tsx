@@ -1,13 +1,13 @@
-import { useOrderStore } from "@/src/store/order";
+import { OrderState, useOrderStore } from "@/src/store/order";
 import { RiMoneyDollarCircleLine } from "@remixicon/react";
 
 export default function OrderPaymentMethod() {
   const paymentMethod: string = useOrderStore(
-    (state: any) => state.paymentMethod
+    (state: OrderState) => state.paymentMethod
   );
 
   const setPaymentMethod = useOrderStore(
-    (state: any) => state.setPaymentMethod
+    (state: OrderState) => state.setPaymentMethod
   );
 
   return (

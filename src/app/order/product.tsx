@@ -6,43 +6,31 @@ import {
   SuccessResponse,
 } from "@/src/interface";
 import { useOutletStore } from "@/src/store/outlet";
-import { useOrderStore } from "@/src/store/order";
+import { OrderState, useOrderStore } from "@/src/store/order";
 import { baseUrl } from "@/src/util/services";
-import {
-  RiAddLine,
-  RiShieldCheckLine,
-  RiStore2Line,
-  RiSubtractLine,
-} from "@remixicon/react";
+import { RiAddLine, RiStore2Line, RiSubtractLine } from "@remixicon/react";
 import { useQuery } from "@tanstack/react-query";
 import axios, { AxiosError, AxiosResponse } from "axios";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect } from "react";
 
 export default function Product() {
   const selectedProducts = useOrderStore(
-    (state: any) => state.selectedProducts
+    (state: OrderState) => state.selectedProducts
   );
 
   const outlet = useOutletStore((state) => state.outlet);
 
-  // const productAmount = useMemo(() => selectedProducts, [selectedProducts]);
-
-  const [selectedProductChangesCount, setSelectedProductChangesCount] =
-    useState<number>(0);
-
   const increaseProductQuantity = useOrderStore(
-    (state: any) => state.increaseProductQuantity
+    (state: OrderState) => state.increaseProductQuantity
   );
 
   const decreaseProductQuantity = useOrderStore(
-    (state: any) => state.decreaseProductQuantity
+    (state: OrderState) => state.decreaseProductQuantity
   );
-
-  const products = useOrderStore((state: any) => state.products);
   // const selectedProductsLength = useOrderStore((state: any) =>
   //   state.selectedProductsLength()
   // );
-  const setProducts = useOrderStore((state: any) => state.setProducts);
+  const setProducts = useOrderStore((state: OrderState) => state.setProducts);
 
   const { isPending, isError, data, error } = useQuery<
     AxiosResponse<SuccessResponse<IProduct[]>>,
@@ -55,7 +43,7 @@ export default function Product() {
   });
 
   useEffect(() => {
-    setProducts(data?.data.data);
+    setProducts(data?.data.data ?? []);
   }, [data]);
 
   return (

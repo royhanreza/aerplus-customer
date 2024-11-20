@@ -1,7 +1,5 @@
 import {
   RiCheckboxCircleLine,
-  RiHourglass2Line,
-  RiHourglassFill,
   RiHourglassLine,
   RiInstanceLine,
   RiTruckLine,

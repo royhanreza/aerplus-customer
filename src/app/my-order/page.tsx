@@ -4,20 +4,13 @@ import { InfiniteSuccessReponse, OutletSaleOrder } from "@/src/interface";
 import { useCustomerStore } from "@/src/store/customer";
 import { baseUrl } from "@/src/util/services";
 import {
-  RiCheckboxCircleLine,
   RiShoppingBag4Fill,
   RiContrastDrop2Fill,
-  RiArrowLeftLine,
   RiDropboxLine,
-  RiListCheck2,
-  RiShoppingCart2Line,
-  RiShoppingBag2Line,
-  RiShoppingBagLine,
   RiShoppingBasketLine,
 } from "@remixicon/react";
 import { InfiniteData, useInfiniteQuery } from "@tanstack/react-query";
 import axios, { AxiosError, AxiosResponse } from "axios";
-import { pages } from "next/dist/build/templates/app-page";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Status from "./status";
@@ -33,15 +26,11 @@ export default function MyOrder() {
 
   const {
     data,
-    error,
     fetchNextPage,
     hasNextPage,
-    isFetching,
     isFetchingNextPage,
-    status,
     isPending,
     refetch,
-    isRefetching,
     isSuccess,
   } = useInfiniteQuery<
     AxiosResponse<InfiniteSuccessReponse<OutletSaleOrder[]>>,
@@ -56,7 +45,7 @@ export default function MyOrder() {
       );
     },
     initialPageParam: 1,
-    getNextPageParam: (data, pages) => {
+    getNextPageParam: (data) => {
       console.log(data);
       // return 1;
       // console.log("last_page", lastPage.data.data.last_page);
@@ -78,19 +67,6 @@ export default function MyOrder() {
       fetchNextPage();
     }
   }, [inView, hasNextPage, fetchNextPage]);
-
-  const onChangeTab = (orderStatus: string) => {
-    setOrderStatus(orderStatus);
-  };
-
-  const [hasHistory, setHasHistory] = useState(false);
-
-  useEffect(() => {
-    // Cek window.history setelah komponen di-mount (client-side)
-    console.log(typeof window.history);
-    console.log(window.history);
-    setHasHistory(window.history.length > 1);
-  }, []);
 
   return (
     <html lang="id" data-theme="lofi">

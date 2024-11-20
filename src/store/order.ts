@@ -2,7 +2,19 @@ import { produce } from "immer";
 import { create } from "zustand";
 import { Product } from "../interface";
 
-export const useOrderStore = create((set, get: any) => ({
+export interface OrderState {
+  selectedProducts: { [key: string]: number };
+  note: string;
+  paymentMethod: string;
+  products: Product[];
+  setNote: (note: string) => void;
+  setPaymentMethod: (paymentMethod: string) => void;
+  setProducts: (products: Product[]) => void;
+  increaseProductQuantity: (productId: number) => void;
+  decreaseProductQuantity: (productId: number) => void;
+}
+
+export const useOrderStore = create<OrderState>((set) => ({
   selectedProducts: {},
   note: "",
   paymentMethod: "cash",
@@ -21,7 +33,7 @@ export const useOrderStore = create((set, get: any) => ({
       })
     );
   },
-  setProducts: (products: Product) => {
+  setProducts: (products: Product[]) => {
     return set(
       produce((state) => {
         state.products = products;

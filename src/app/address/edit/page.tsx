@@ -1,12 +1,5 @@
 "use client";
-import {
-  RiCheckboxCircleLine,
-  RiShoppingBag4Fill,
-  RiContrastDrop2Fill,
-  RiArrowLeftLine,
-  RiPhoneLine,
-} from "@remixicon/react";
-import Link from "next/link";
+import { RiArrowLeftLine } from "@remixicon/react";
 
 export default function EditAddress() {
   return (

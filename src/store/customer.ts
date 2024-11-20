@@ -1,9 +1,9 @@
 import { create } from "zustand";
-import { Customer, Outlet } from "../interface";
+import { Customer } from "../interface";
 import { produce } from "immer";
 import { createJSONStorage, persist } from "zustand/middleware";
 
-interface CustomerState {
+export interface CustomerState {
   customer: Customer | null;
   setCustomer: (customer: Customer) => void;
 }

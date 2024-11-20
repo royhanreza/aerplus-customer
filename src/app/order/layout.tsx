@@ -1,5 +1,4 @@
 import Provider from "@/src/util/provider";
-import { RiArrowLeftLine } from "@remixicon/react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {

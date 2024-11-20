@@ -3,17 +3,15 @@
 import { Customer, Outlet } from "@/src/interface";
 import { useCustomerStore } from "@/src/store/customer";
 import { useOutletStore } from "@/src/store/outlet";
-import { baseApiUrl, baseUrl } from "@/src/util/services";
+import { baseUrl } from "@/src/util/services";
 import { RiCloseCircleFill, RiPhoneLine } from "@remixicon/react";
-import { QueryClient, useMutation } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { setCookie } from "cookies-next";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Bounce, toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
-const queryClient = new QueryClient();
 
 export default function Login() {
   const router = useRouter();
