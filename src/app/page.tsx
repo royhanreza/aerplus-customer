@@ -1,11 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-
 export default function Home() {
-  const router = useRouter();
-
   return (
     <html lang="en" data-theme="bumblebee">
       <body className="bg-slate-100">
