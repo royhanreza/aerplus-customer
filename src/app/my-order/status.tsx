@@ -38,6 +38,13 @@ export default function Status({
         <span className="text-xs text-green-600">Selesai</span>
       </div>
     );
+  } else if (status == "cancel") {
+    return (
+      <div className="badge bg-red-100 border-none rounded">
+        <RiCheckboxCircleLine className="text-red-600 me-1" size={12} />
+        <span className="text-xs text-red-600">Dibatalkan</span>
+      </div>
+    );
   }
 
   return (

@@ -8,6 +8,7 @@ import {
   RiContrastDrop2Fill,
   RiDropboxLine,
   RiShoppingBasketLine,
+  RiUser3Line,
 } from "@remixicon/react";
 import { InfiniteData, useInfiniteQuery } from "@tanstack/react-query";
 import axios, { AxiosError, AxiosResponse } from "axios";
@@ -85,7 +86,7 @@ export default function MyOrder() {
                     <RiArrowLeftLine />
                   </button>
                 </div> */}
-                <div>Pemesanan</div>
+                <div>Pesanan Saya</div>
               </div>
               <div>
                 <button
@@ -96,6 +97,15 @@ export default function MyOrder() {
                   }}
                 >
                   <RiShoppingBasketLine />
+                </button>
+                <button
+                  className="btn btn-circle btn-ghost"
+                  onClick={() => {
+                    // console.log("clicked");
+                    router.push("/my-profile");
+                  }}
+                >
+                  <RiUser3Line />
                 </button>
               </div>
             </div>
@@ -240,9 +250,9 @@ export default function MyOrder() {
                             </p>
                           </div>
                           <div>
-                            <button className="btn bg-amber-500 text-white btn-sm text-xs rounded-md">
+                            {/* <button className="btn bg-amber-500 text-white btn-sm text-xs rounded-md">
                               Beli Lagi
-                            </button>
+                            </button> */}
                           </div>
                         </div>
                       </div>

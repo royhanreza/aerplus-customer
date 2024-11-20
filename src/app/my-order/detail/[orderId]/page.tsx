@@ -9,6 +9,7 @@ import { baseUrl } from "@/src/util/services";
 import {
   RiArrowLeftLine,
   RiCheckboxCircleLine,
+  RiCloseCircleLine,
   RiContrastDropLine,
   RiFileDamageLine,
   RiHourglassLine,
@@ -18,16 +19,23 @@ import {
   RiTimeLine,
   RiTruckLine,
 } from "@remixicon/react";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import axios, { AxiosError, AxiosResponse } from "axios";
 import dayjs from "dayjs";
 import { useParams, useRouter } from "next/navigation";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Payment from "./payment";
-import { Toaster } from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 import Image from "next/image";
 import { formatFileSize } from "@/src/util/util";
 import ImageViewer from "react-simple-image-viewer";
+import {
+  Dialog,
+  DialogBackdrop,
+  DialogPanel,
+  DialogTitle,
+} from "@headlessui/react";
+import { useCustomerStore } from "@/src/store/customer";
 
 function StatusBadge({ status }: { status: string | null | undefined }) {
   if (status == "pending") {
@@ -44,7 +52,7 @@ function StatusBadge({ status }: { status: string | null | undefined }) {
         <span className="text-xs text-yellow-600">Menunggu Pembayaran</span>
       </div>
     );
-  } else if (status == "deliver") {
+  } else if (status == "deliver" || status == "arrived") {
     return (
       <div className="badge bg-blue-100 border-none rounded">
         <RiTruckLine className="text-blue-600 me-1" size={12} />
@@ -56,6 +64,13 @@ function StatusBadge({ status }: { status: string | null | undefined }) {
       <div className="badge bg-green-100 border-none rounded">
         <RiCheckboxCircleLine className="text-green-600 me-1" size={12} />
         <span className="text-xs text-green-600">Selesai</span>
+      </div>
+    );
+  } else if (status == "cancel") {
+    return (
+      <div className="badge bg-red-100 border-none rounded">
+        <RiCloseCircleLine className="text-red-600 me-1" size={12} />
+        <span className="text-xs text-red-600">Dibatalkan</span>
       </div>
     );
   }
@@ -87,10 +102,22 @@ function Status({ status }: { status: string | null | undefined }) {
         Sedang Dikirim
       </div>
     );
+  } else if (status == "arrived") {
+    return (
+      <div className="px-4 py-3 bg-teal-600 font-semibold text-sm text-white">
+        Pesanan Tiba
+      </div>
+    );
   } else if (status == "finish") {
     return (
       <div className="px-4 py-3 bg-teal-600 font-semibold text-sm text-white">
         Pesanan Selesai
+      </div>
+    );
+  } else if (status == "cancel") {
+    return (
+      <div className="px-4 py-3 bg-red-600 font-semibold text-sm text-white">
+        Pesanan Dibatalkan
       </div>
     );
   }
@@ -113,8 +140,12 @@ function StatusDescription({ status }: { status: string | null | undefined }) {
     return <div className="text-yellow-600">Pesanan perlu dibayar</div>;
   } else if (status == "deliver") {
     return <div className="text-blue-400">Pesanan sedang dikirim</div>;
-  } else if (status == "finish") {
+  } else if (status == "arrived") {
     return <div className="text-teal-600">Pesanan tiba di alamat tujuan</div>;
+  } else if (status == "finish") {
+    return <div className="text-teal-600">Pesanan telah selesai</div>;
+  } else if (status == "cancel") {
+    return <div className="text-red-600">Pesanan telah dibatalkan</div>;
   }
 
   return <div>Pesanan sedang diproses</div>;
@@ -211,6 +242,89 @@ export default function OrderDetail() {
 
     return dayjs(date).format("DD MMM YYYY H:mm").toString();
   }, [data]);
+
+  // --Finish
+  const [isOpenFinishDialog, setIsOpenFinishDialog] = useState(false);
+
+  const finishOrderMutation = useMutation<
+    AxiosResponse<SuccessResponse<OutletSaleOrder>>,
+    AxiosError<{ message: string }>
+  >({
+    mutationFn: (data) => {
+      return axios.post(
+        `${baseUrl}/api/v1/outlet-sale-orders/${params.orderId}/finish`,
+        data
+      );
+    },
+    onSuccess: (data) => {
+      const successMessage = data.data.message;
+      toast.success(successMessage);
+      refetch();
+    },
+    onError: (error) => {
+      const errorMessage = error.response?.data.message ?? "Terjadi kesalahan";
+      toast.error(errorMessage);
+    },
+  });
+
+  const onClickFinish = () => {
+    setIsOpenFinishDialog(false);
+    finishOrderMutation.mutate();
+  };
+  // --Finish
+
+  // --Cancel
+  const [isOpenCancelDialog, setIsOpenCancelDialog] = useState(false);
+
+  const [cancelReason, setCancelReason] = useState("");
+  const [otherCancelReason, setOtherCancelReason] = useState("");
+  const customer = useCustomerStore((state) => state.customer);
+
+  interface CancelOrderDto {
+    source: string;
+    canceled_by?: number;
+    reason: string;
+  }
+
+  const cancelOrderMutation = useMutation<
+    AxiosResponse<SuccessResponse<OutletSaleOrder>>,
+    AxiosError<{ message: string }>,
+    CancelOrderDto
+  >({
+    mutationFn: (data: CancelOrderDto) => {
+      return axios.post(
+        `${baseUrl}/api/v1/outlet-sale-orders/${params.orderId}/cancel`,
+        {
+          ...data,
+        }
+      );
+    },
+    onSuccess: (data) => {
+      const successMessage = data.data.message ?? "Pesanan telah dibatalkan";
+      toast.success(successMessage);
+      refetch();
+    },
+    onError: (error) => {
+      const errorMessage = error.response?.data.message ?? "Terjadi kesalahan";
+      toast.error(errorMessage);
+    },
+  });
+
+  const onClickCancel = () => {
+    setIsOpenCancelDialog(false);
+    cancelOrderMutation.mutate({
+      source: "customer",
+      canceled_by: customer?.id,
+      reason: `${cancelReason} ${otherCancelReason}`,
+    });
+  };
+
+  useEffect(() => {
+    setCancelReason("");
+    setOtherCancelReason("");
+  }, [isOpenCancelDialog]);
+
+  // --Cancel
 
   return (
     <html lang="en" data-theme="lofi">
@@ -453,15 +567,32 @@ export default function OrderDetail() {
               <div>
                 {data?.data.data?.status == "pending" ||
                 data?.data.data?.status == "waiting_payment" ? (
-                  <button className="btn bg-red-600 hover:bg-red-800 text-white rounded-md w-full">
+                  <button
+                    className="btn bg-red-600 hover:bg-red-800 text-white rounded-md w-full"
+                    onClick={() => {
+                      setIsOpenCancelDialog(true);
+                    }}
+                    disabled={cancelOrderMutation.isPending}
+                  >
+                    {cancelOrderMutation.isPending ? (
+                      <span className="loading loading-spinner"></span>
+                    ) : null}
                     Batalkan Pesanan
                   </button>
                 ) : null}
-              </div>
-              <div>
                 {data?.data.data?.status == "arrived" ? (
-                  <button className="btn bg-green-500 hover:bg-green-700 text-white rounded-md w-full">
-                    Selesai
+                  <button
+                    className="btn bg-green-500 hover:bg-green-700 text-white rounded-md w-full"
+                    onClick={() => {
+                      // onClickFinish();
+                      setIsOpenFinishDialog(true);
+                    }}
+                    disabled={finishOrderMutation.isPending}
+                  >
+                    {finishOrderMutation.isPending ? (
+                      <span className="loading loading-spinner"></span>
+                    ) : null}
+                    Selesaikan
                   </button>
                 ) : null}
               </div>
@@ -481,6 +612,133 @@ export default function OrderDetail() {
             closeOnClickOutside={true}
           />
         ) : null}
+        <Dialog
+          open={isOpenFinishDialog}
+          onClose={() => setIsOpenFinishDialog(false)}
+          className="relative z-50"
+        >
+          <DialogBackdrop className="fixed inset-0 bg-black/30" />
+          <div className="fixed inset-0 flex w-screen items-center justify-center p-10">
+            {/* The actual dialog panel  */}
+            <DialogPanel className="max-w-lg space-y-4 bg-white p-6 rounded">
+              <DialogTitle className="font-bold">
+                Selesaikan Pesanan?
+              </DialogTitle>
+              <p className="text-sm">
+                Pastikan pesanan sudah diterima dan tidak ada kesalahan
+              </p>
+              <div className="flex gap-4 justify-end">
+                <button
+                  className="btn btn-ghost"
+                  onClick={() => setIsOpenFinishDialog(false)}
+                >
+                  Batal
+                </button>
+                <button
+                  className="btn bg-green-500 hover:bg-green-600 border-none text-white"
+                  onClick={() => onClickFinish()}
+                >
+                  Selesai
+                </button>
+              </div>
+            </DialogPanel>
+          </div>
+        </Dialog>
+        <Dialog
+          open={isOpenCancelDialog}
+          onClose={() => setIsOpenCancelDialog(false)}
+          className="relative z-50"
+        >
+          <DialogBackdrop className="fixed inset-0 bg-black/30" />
+          <div className="fixed inset-0 flex w-screen items-center justify-center p-6 ">
+            {/* The actual dialog panel  */}
+            <DialogPanel className="w-full space-y-4 bg-white p-6 rounded">
+              <DialogTitle className="font-bold">Batalkan Pesanan?</DialogTitle>
+              {/* <p className="text-sm">Alasan pembatalan</p> */}
+              <ul className="text-sm flex flex-col gap-3">
+                <li className="flex items-center">
+                  <div className="me-2">
+                    <input
+                      type="radio"
+                      name="cancel-radio"
+                      className="radio checked:bg-amber-500 "
+                      id="incorrect-address"
+                      value="Alamat tidak sesuai"
+                      onChange={(event) => {
+                        setCancelReason(event.target.value);
+                      }}
+                    />
+                  </div>
+                  <label htmlFor="incorrect-address">Alamat tidak sesuai</label>
+                </li>
+                <li className="flex items-center">
+                  <div className="me-2">
+                    <input
+                      type="radio"
+                      name="cancel-radio"
+                      className="radio checked:bg-amber-500 "
+                      id="incorrect-payment-method"
+                      value="Ganti Metode Pembayaran"
+                      onChange={(event) => {
+                        setCancelReason(event.target.value);
+                      }}
+                    />
+                  </div>
+                  <label htmlFor="incorrect-payment-method" className="text-sm">
+                    Ganti Metode Pembayaran
+                  </label>
+                </li>
+                <li className="flex items-center">
+                  <div className="me-2">
+                    <input
+                      type="radio"
+                      name="cancel-radio"
+                      className="radio checked:bg-amber-500 "
+                      id="incorrect-proof-of-payment"
+                      value="Bukti Pembayaran Salah"
+                      onChange={(event) => {
+                        setCancelReason(event.target.value);
+                      }}
+                    />
+                  </div>
+                  <label
+                    htmlFor="incorrect-proof-of-payment"
+                    className="text-sm"
+                  >
+                    Bukti Pembayaran Salah
+                  </label>
+                </li>
+                <li>
+                  <p className="mb-3">Lainnya</p>
+                  <div>
+                    <input
+                      type="text"
+                      placeholder="Alasan Lainnya"
+                      className="input input-sm w-full max-w-xs border-b border-b-slate-800"
+                      onChange={(event) => {
+                        setOtherCancelReason(event.target.value);
+                      }}
+                    />
+                  </div>
+                </li>
+              </ul>
+              <div className="flex gap-4 justify-end">
+                <button
+                  className="btn btn-ghost"
+                  onClick={() => setIsOpenCancelDialog(false)}
+                >
+                  Batal
+                </button>
+                <button
+                  className="btn bg-red-500 hover:bg-red-600 border-none text-white"
+                  onClick={() => onClickCancel()}
+                >
+                  Batalkan
+                </button>
+              </div>
+            </DialogPanel>
+          </div>
+        </Dialog>
       </body>
     </html>
   );

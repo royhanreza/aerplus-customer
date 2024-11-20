@@ -1,4 +1,4 @@
 // export const baseUrl: string =
-//   "https://de08-2a09-bac1-34a0-28-00-279-43.ngrok-free.app";
+//   "https://83b7-2a09-bac1-34c0-28-00-19b-19c.ngrok-free.app";
 export const baseUrl: string = "https://aerplus.arenzha.xyz";
 export const baseApiUrl: string = `${baseUrl}/api`;
