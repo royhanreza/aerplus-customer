@@ -90,7 +90,7 @@ export default function Login() {
                 <div className="my-3">
                   <label className="input input-bordered flex items-center gap-2">
                     <RiPhoneLine />
-                    <div>+62</div>
+                    {/* <div>+62</div> */}
                     <input
                       type="number"
                       className="grow"
