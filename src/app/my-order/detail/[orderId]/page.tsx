@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  CvBankAccount,
   ErrorResponse,
   OutletSaleOrder,
   SuccessResponse,
@@ -36,6 +37,7 @@ import {
   DialogTitle,
 } from "@headlessui/react";
 import { useCustomerStore } from "@/src/store/customer";
+import { useOutletStore } from "@/src/store/outlet";
 
 function StatusBadge({ status }: { status: string | null | undefined }) {
   if (status == "pending") {
@@ -155,6 +157,8 @@ export default function OrderDetail() {
   const router = useRouter();
   const params = useParams<{ orderId: string }>();
 
+  const outlet = useOutletStore((store) => store.outlet);
+
   const [currentImage, setCurrentImage] = useState(0);
   const [isViewerOpen, setIsViewerOpen] = useState(false);
 
@@ -176,6 +180,19 @@ export default function OrderDetail() {
     queryFn: () => {
       return axios.get(
         `${baseUrl}/api/v1/outlet-sale-orders/${params.orderId}`
+      );
+    },
+    // enabled: false,
+  });
+
+  const outletCvBankAccountQuery = useQuery<
+    AxiosResponse<SuccessResponse<CvBankAccount>>,
+    AxiosError<ErrorResponse>
+  >({
+    queryKey: ["outlet_cv_bank_account"],
+    queryFn: () => {
+      return axios.get(
+        `${baseUrl}/api/v1/outlets/${outlet?.id}/cv-bank-account`
       );
     },
     // enabled: false,
@@ -480,6 +497,8 @@ export default function OrderDetail() {
                   <div className="card-body p-4">
                     <Payment
                       orderId={data.data.data.id}
+                      cvBankAccount={outletCvBankAccountQuery.data?.data.data}
+                      cvBankAccountQuery={outletCvBankAccountQuery}
                       onSuccessPayment={() => {
                         refetch();
                       }}

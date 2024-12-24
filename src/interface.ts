@@ -33,6 +33,8 @@ export interface Product {
   purchase_price: number | null;
   average_purchase_price: number | null;
   sale_price: number | null;
+  customer_product_name: string | null;
+  customer_product_sale_price: number | null;
   type: string | null;
 }
 
@@ -43,6 +45,9 @@ export interface Customer {
   email: string | null;
   address: string | null;
   description: string | null;
+  latitude: string | null;
+  longitude: string | null;
+  location: string | null;
   outlet_id: string | number | null;
   outlet: Outlet | null;
 }
@@ -56,6 +61,15 @@ export interface Outlet {
   outlet_id: string | number | null;
   latitude: string | null;
   longitude: string | null;
+}
+
+export interface CV {
+  id: number;
+}
+
+export interface BankAccount {
+  id: number;
+  name: string;
 }
 
 export interface OutletSaleOrder {
@@ -122,4 +136,16 @@ export interface OutletSaleOrderPayTransferDto {
   file_name: string | null;
   file_size: string | number | null;
   paid_by: string | number | null;
+}
+
+export interface CustomerUpdateLocationDto {
+  latitude: number;
+  longitude: number;
+  location: string;
+}
+
+export interface CvBankAccount {
+  id: number;
+  number: string | null;
+  name: string | null;
 }

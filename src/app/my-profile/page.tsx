@@ -4,6 +4,7 @@ import {
   RiArrowLeftLine,
   RiMapPinLine,
   RiLogoutCircleLine,
+  RiMap2Line,
 } from "@remixicon/react";
 
 import "react-toastify/dist/ReactToastify.css";
@@ -42,7 +43,7 @@ export default function MyProfile() {
   return (
     <html lang="en" data-theme="lofi">
       <body className="bg-slate-300">
-        <div className="bg-slate-100 max-w-screen-sm mx-auto relative">
+        <div className="bg-slate-100 max-w-screen-sm mx-auto relative min-h-dvh">
           <div className="px-4 py-3 text-xl font-semibold flex items-center justify-between">
             <div className="flex items-center">
               <div className="me-2">
@@ -93,12 +94,37 @@ export default function MyProfile() {
             <div className="bg-white mb-2">
               <div className="flex items-center p-4 border-b border-b-slate-100">
                 <div className="me-1">
-                  <RiMapPinLine className="text-amber-500" size={20} />
+                  <RiMap2Line className="text-amber-500" size={20} />
                 </div>
                 <div>Alamat Kirim</div>
               </div>
               <div className="p-4 flex space-x-4 text-xs">
                 <p>{customer?.address}</p>
+              </div>
+            </div>
+            <div className="bg-white mb-2">
+              <div className="flex items-center p-4 border-b border-b-slate-100">
+                <div className="me-1">
+                  <RiMapPinLine className="text-amber-500" size={20} />
+                </div>
+                <div>Titik Kirim</div>
+              </div>
+              <div className="p-4 text-xs">
+                <div className="mb-4">
+                  <img
+                    src={`https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/pin-s+FF0000(${customer?.longitude},${customer?.latitude}),pin-m+0000FF(${customer?.longitude},${customer?.latitude})/${customer?.longitude},${customer?.latitude},18,0/1200x800?access_token=pk.eyJ1Ijoia2l0dG9rYXR0byIsImEiOiJja2t5eTducm4wYmhwMnFwNXI4ejA4cGhuIn0.xoSKS41bJtuetZ8v5p_aiQ`}
+                    alt="Lokasi Customer"
+                    className="rounded-sm"
+                  />
+                </div>
+                <button
+                  className="btn btn-primary w-full"
+                  onClick={() => {
+                    router.push("/my-profile/edit-location");
+                  }}
+                >
+                  Ubah Titik
+                </button>
               </div>
             </div>
           </div>

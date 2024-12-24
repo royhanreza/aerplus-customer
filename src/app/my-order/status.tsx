@@ -31,6 +31,13 @@ export default function Status({
         <span className="text-xs text-blue-600">Dikirim</span>
       </div>
     );
+  } else if (status == "arrived") {
+    return (
+      <div className="badge bg-green-100 border-none rounded">
+        <RiTruckLine className="text-green-600 me-1" size={12} />
+        <span className="text-xs text-green-600">Pesanan Tiba</span>
+      </div>
+    );
   } else if (status == "finish") {
     return (
       <div className="badge bg-green-100 border-none rounded">

@@ -1,4 +1,5 @@
 import {
+  CvBankAccount,
   OutletSaleOrder,
   OutletSaleOrderPayTransferDto,
   SuccessResponse,
@@ -12,7 +13,7 @@ import {
   RiFileCopy2Line,
   RiImageAddLine,
 } from "@remixicon/react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, UseQueryResult } from "@tanstack/react-query";
 import axios, { AxiosError, AxiosResponse } from "axios";
 import Image from "next/image";
 import { ChangeEvent, useEffect, useState } from "react";
@@ -20,9 +21,13 @@ import toast from "react-hot-toast";
 
 export default function Payment({
   orderId,
+  cvBankAccount,
+  cvBankAccountQuery,
   onSuccessPayment,
 }: {
   orderId: number;
+  cvBankAccount: CvBankAccount | null | undefined;
+  cvBankAccountQuery: UseQueryResult;
   onSuccessPayment: () => void;
 }) {
   const [copied, setCopied] = useState(false);
@@ -115,21 +120,28 @@ export default function Payment({
       <div className="badge bg-blue-100 border-none rounded mb-3">
         <span className="text-xs text-blue-600">Transfer Manual</span>
       </div>
-      <div className="flex items-center justify-between">
-        <div className="flex items-center mb-5">
+      {cvBankAccountQuery.isPending ? (
+        <div className="flex justify-center py-1">
           <div>
-            <Image
-              src={`/bca-logo.png`}
-              alt="Logo BCA"
-              width={60}
-              height={60}
-            />
+            <span className="loading loading-dots loading-lg text-amber-500"></span>
           </div>
-          <div className="ps-5">
-            <p className="font-semibold">Bank BCA</p>
-            <div className="flex items-center">
-              <p className="font-bold text-lg my-1 me-3">4910-5150-26</p>
-              <div>
+        </div>
+      ) : (
+        <div className="flex items-center justify-between">
+          <div className="flex items-center mb-5">
+            <div>
+              <Image
+                src={`/bca-logo.png`}
+                alt="Logo BCA"
+                width={60}
+                height={60}
+              />
+            </div>
+            <div className="ps-5">
+              <div className="flex items-center">
+                <p className="font-semibold me-3">{cvBankAccount?.name}</p>
+                {/* <p className="font-bold text-lg my-1 me-3">4910-5150-26</p> */}
+                {/* <div>
                 {copied ? (
                   <RiCheckLine className="text-green-500" />
                 ) : (
@@ -140,17 +152,19 @@ export default function Payment({
                     className="cursor-pointer"
                   />
                 )}
+              </div> */}
               </div>
-            </div>
-            <p className="font-medium text-sm text-gray-500">
+              {/* <p className="font-medium text-sm text-gray-500">
               a/n TJHIN YIE FANG
-            </p>
+            </p> */}
+            </div>
           </div>
-        </div>
-        {/* <div className="badge bg-blue-100 border-none rounded">
+          {/* <div className="badge bg-blue-100 border-none rounded">
           <span className="text-xs text-blue-600">Transfer Manual</span>
         </div> */}
-      </div>
+        </div>
+      )}
+
       {!selectedImage ? (
         <div className="mb-3">
           <label

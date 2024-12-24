@@ -64,11 +64,12 @@ export default function Order() {
     return products
       .map<number>((product) => {
         return (
-          (product?.sale_price || 0) * (selectedProducts[product?.id] || 0)
+          (product?.customer_product_sale_price || 0) *
+          (selectedProducts[product?.id] || 0)
         );
       })
       .reduce((acc, cur) => acc + cur, 0);
-  }, [selectedProducts]);
+  }, [selectedProducts, products]);
 
   const orderMutation = useMutation<
     AxiosResponse,
@@ -108,14 +109,14 @@ export default function Order() {
           (product?.sale_price || 0) * (selectedProducts[product?.id] || 0);
         return {
           good_id: product.id,
-          price: product.sale_price,
+          price: product.customer_product_sale_price,
           qty: selectedProducts[product?.id] ?? 0,
           note: "",
           amount,
         };
       })
       .filter((orderItem) => (orderItem?.qty ?? 0) > 0);
-  }, [selectedProducts]);
+  }, [selectedProducts, products]);
   const router = useRouter();
 
   const handleLoginSuccess = (data: OutletSaleOrder) => {
