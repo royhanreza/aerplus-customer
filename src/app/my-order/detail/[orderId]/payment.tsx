@@ -7,12 +7,7 @@ import {
 import { useCustomerStore } from "@/src/store/customer";
 import { baseUrl } from "@/src/util/services";
 import { formatFileSize } from "@/src/util/util";
-import {
-  RiCheckLine,
-  RiCloseLine,
-  RiFileCopy2Line,
-  RiImageAddLine,
-} from "@remixicon/react";
+import { RiCloseLine, RiImageAddLine } from "@remixicon/react";
 import { useMutation, UseQueryResult } from "@tanstack/react-query";
 import axios, { AxiosError, AxiosResponse } from "axios";
 import Image from "next/image";
@@ -36,11 +31,11 @@ export default function Payment({
 
   const customer = useCustomerStore((state) => state.customer);
 
-  const onClickCopyBankAccountNumber = (text: string) => {
-    navigator.clipboard.writeText(text).then(() => {
-      setCopied(true);
-    });
-  };
+  //   const onClickCopyBankAccountNumber = (text: string) => {
+  //     navigator.clipboard.writeText(text).then(() => {
+  //       setCopied(true);
+  //     });
+  //   };
 
   const [selectedImage, setSelectedImage] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
