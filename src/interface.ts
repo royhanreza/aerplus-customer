@@ -98,6 +98,15 @@ export interface OutletSaleOrder {
   customer: Customer | null;
   outlet: Outlet | null;
   items: OutletSaleOrderItem[];
+  review: OutletSaleOrderReview | null;
+}
+
+export interface OutletSaleOrderReview {
+  id: number;
+  review: string | null;
+  rating: number | null;
+  created_at: string | null;
+  updated_at: string | null;
 }
 
 export interface OutletSaleOrderItem {

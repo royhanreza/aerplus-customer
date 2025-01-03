@@ -4,6 +4,7 @@ import {
   CvBankAccount,
   ErrorResponse,
   OutletSaleOrder,
+  OutletSaleOrderReview,
   SuccessResponse,
 } from "@/src/interface";
 import { baseUrl } from "@/src/util/services";
@@ -38,6 +39,7 @@ import {
 } from "@headlessui/react";
 import { useCustomerStore } from "@/src/store/customer";
 import { useOutletStore } from "@/src/store/outlet";
+import Review from "./review";
 
 function StatusBadge({ status }: { status: string | null | undefined }) {
   if (status == "pending") {
@@ -343,6 +345,54 @@ export default function OrderDetail() {
 
   // --Cancel
 
+  // --Review
+  interface SendReviewDto {
+    review: string | null;
+    rating: number;
+  }
+
+  const sendReviewMutation = useMutation<
+    AxiosResponse<SuccessResponse<OutletSaleOrderReview>>,
+    AxiosError<{ message: string }>,
+    SendReviewDto
+  >({
+    mutationFn: (data: SendReviewDto) => {
+      return axios.post(
+        `${baseUrl}/api/v1/outlet-sale-orders/${params.orderId}/review`,
+        {
+          ...data,
+        }
+      );
+    },
+    onSuccess: (data) => {
+      const successMessage = data.data.message ?? "Ulasan terkirim";
+      toast.success(successMessage);
+      refetch();
+    },
+    onError: (error) => {
+      const errorMessage = error.response?.data.message ?? "Terjadi kesalahan";
+      toast.error(errorMessage);
+    },
+  });
+
+  const onSendReview = ({
+    review,
+    rating,
+  }: {
+    review: string | null;
+    rating: number;
+  }) => {
+    if (!rating) {
+      toast.error("Masukkan penilaian");
+      return;
+    }
+    sendReviewMutation.mutate({
+      review,
+      rating,
+    });
+  };
+  // --Review
+
   return (
     <html lang="en" data-theme="lofi">
       <body className="bg-slate-300">
@@ -583,6 +633,13 @@ export default function OrderDetail() {
                   </div>
                 </div>
               </div>
+              {data?.data.data?.status == "finish" ? (
+                <Review
+                  orderReview={data?.data.data?.review}
+                  onSendReview={onSendReview}
+                  isPendingMutation={sendReviewMutation.isPending}
+                />
+              ) : null}
               <div>
                 {data?.data.data?.status == "pending" ||
                 data?.data.data?.status == "waiting_payment" ? (
