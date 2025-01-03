@@ -9,6 +9,7 @@ import {
   RiDropboxLine,
   RiShoppingBasketLine,
   RiUser3Line,
+  RiShoppingBag3Line,
 } from "@remixicon/react";
 import { InfiniteData, useInfiniteQuery } from "@tanstack/react-query";
 import axios, { AxiosError, AxiosResponse } from "axios";
@@ -17,6 +18,7 @@ import { useRouter } from "next/navigation";
 import Status from "./status";
 import { useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
+import dayjs from "dayjs";
 
 export default function MyOrder() {
   const router = useRouter();
@@ -165,6 +167,24 @@ export default function MyOrder() {
               >
                 Selesai
               </a>
+              <a
+                role="tab"
+                className={`tab ${
+                  orderStatus == "cancel"
+                    ? "tab-active text-amber-500 font-semibold border-amber-500"
+                    : ""
+                } `}
+                style={
+                  orderStatus == "cancel"
+                    ? { borderBottomColor: "#f59e0b" }
+                    : {}
+                }
+                onClick={() => {
+                  setOrderStatus("cancel");
+                }}
+              >
+                Dibatalkan
+              </a>
             </div>
           </div>
           {isPending ? (
@@ -173,7 +193,7 @@ export default function MyOrder() {
                 <span className="loading loading-dots loading-lg text-amber-500"></span>
               </div>
             </div>
-          ) : (
+          ) : (data?.pages[0].data.data.data.length ?? 0) > 0 ? (
             <div className="text-sm p-2 flex flex-col gap-2">
               {data?.pages.map((page, index) => (
                 <div className="flex flex-col gap-2" key={index}>
@@ -188,7 +208,7 @@ export default function MyOrder() {
                             <div>
                               <div className="text-xs font-bold">Belanja</div>
                               <div className="text-xs text-gray-500">
-                                16 Okt 2024
+                                {dayjs(order.date).format("DD MMM YYYY")}
                               </div>
                             </div>
                           </div>
@@ -214,7 +234,10 @@ export default function MyOrder() {
                                     </div>
                                     <div className="ps-2">
                                       <h4 className="font-semibold text-xs">
-                                        {orderItem.product?.name}
+                                        {orderItem.product
+                                          ?.customer_product_name ??
+                                          orderItem.product?.name ??
+                                          "-"}
                                       </h4>
                                       <p className="text-gray-500 text-xs">
                                         {orderItem.quantity} barang
@@ -278,6 +301,11 @@ export default function MyOrder() {
               {/* {data?.pages.map((order) => (
                 
               ))} */}
+            </div>
+          ) : (
+            <div className="h-dvh flex flex-col justify-center items-center">
+              <RiShoppingBag3Line className="mb-3 text-gray-400" size={48} />
+              <span className="text-sm text-gray-400">Tidak ada pesanan</span>
             </div>
           )}
         </div>

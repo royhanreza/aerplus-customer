@@ -5,14 +5,14 @@ import { createJSONStorage, persist } from "zustand/middleware";
 
 export interface CustomerState {
   customer: Customer | null;
-  setCustomer: (customer: Customer) => void;
+  setCustomer: (customer: Customer | undefined) => void;
 }
 
 export const useCustomerStore = create<CustomerState>()(
   persist(
     (set) => ({
       customer: null,
-      setCustomer: (customer: Customer) => {
+      setCustomer: (customer: Customer | undefined) => {
         return set(
           produce((state) => {
             state.customer = customer;

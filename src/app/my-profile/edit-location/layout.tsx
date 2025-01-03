@@ -1,13 +1,14 @@
+// "use client";
+
 import Provider from "@/src/util/provider";
 import type { Metadata } from "next";
-import "@smastrom/react-rating/style.css";
 
 export const metadata: Metadata = {
-  title: "Pesanan Saya",
-  description: "Pesanan Saya",
+  title: "Ubah Lokasi",
+  description: "Ubah Lokasi Saya",
 };
 
-export default function OrderDetailLayout({
+export default function EditLocationLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;

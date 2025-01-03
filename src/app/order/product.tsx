@@ -38,7 +38,11 @@ export default function Product() {
   >({
     queryKey: ["products"],
     queryFn: () => {
-      return axios.get(`${baseUrl}/api/v1/products`);
+      return axios.get(`${baseUrl}/api/v1/products`, {
+        params: {
+          is_available_for_customer_order: 1,
+        },
+      });
     },
   });
 
@@ -88,9 +92,10 @@ export default function Product() {
               key={product.id}
             >
               <div>
-                <h4 className="font-medium">{product.name}</h4>
+                <h4 className="font-medium">{product.customer_product_name}</h4>
                 <p className="text-gray-500">
-                  Rp {product.sale_price?.toLocaleString("De-de")}
+                  Rp{" "}
+                  {product.customer_product_sale_price?.toLocaleString("De-de")}
                 </p>
               </div>
               <div className="flex items-center">

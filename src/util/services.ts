@@ -1,4 +1,10 @@
-// export const baseUrl: string =
-//   "https://83b7-2a09-bac1-34c0-28-00-19b-19c.ngrok-free.app";
-export const baseUrl: string = "https://aerplus.arenzha.xyz";
+let apiUrl: string =
+  "https://3f40-2a09-bac5-3a11-25cd-00-3c4-28.ngrok-free.app";
+// let apiUrl: string = "https://aerplus.arenzha.xyz";
+// export const apiUrl: string = ;
+if (process.env.NEXT_PUBLIC_MODE == "production") {
+  apiUrl = "https://aerplus.src-group.net";
+}
+export const baseUrl: string = apiUrl;
+
 export const baseApiUrl: string = `${baseUrl}/api`;

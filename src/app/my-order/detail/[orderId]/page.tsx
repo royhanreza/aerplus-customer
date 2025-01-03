@@ -1,8 +1,10 @@
 "use client";
 
 import {
+  CvBankAccount,
   ErrorResponse,
   OutletSaleOrder,
+  OutletSaleOrderReview,
   SuccessResponse,
 } from "@/src/interface";
 import { baseUrl } from "@/src/util/services";
@@ -36,6 +38,8 @@ import {
   DialogTitle,
 } from "@headlessui/react";
 import { useCustomerStore } from "@/src/store/customer";
+import { useOutletStore } from "@/src/store/outlet";
+import Review from "./review";
 
 function StatusBadge({ status }: { status: string | null | undefined }) {
   if (status == "pending") {
@@ -155,6 +159,8 @@ export default function OrderDetail() {
   const router = useRouter();
   const params = useParams<{ orderId: string }>();
 
+  const outlet = useOutletStore((store) => store.outlet);
+
   const [currentImage, setCurrentImage] = useState(0);
   const [isViewerOpen, setIsViewerOpen] = useState(false);
 
@@ -176,6 +182,19 @@ export default function OrderDetail() {
     queryFn: () => {
       return axios.get(
         `${baseUrl}/api/v1/outlet-sale-orders/${params.orderId}`
+      );
+    },
+    // enabled: false,
+  });
+
+  const outletCvBankAccountQuery = useQuery<
+    AxiosResponse<SuccessResponse<CvBankAccount>>,
+    AxiosError<ErrorResponse>
+  >({
+    queryKey: ["outlet_cv_bank_account"],
+    queryFn: () => {
+      return axios.get(
+        `${baseUrl}/api/v1/outlets/${outlet?.id}/cv-bank-account`
       );
     },
     // enabled: false,
@@ -325,6 +344,54 @@ export default function OrderDetail() {
   }, [isOpenCancelDialog]);
 
   // --Cancel
+
+  // --Review
+  interface SendReviewDto {
+    review: string | null;
+    rating: number;
+  }
+
+  const sendReviewMutation = useMutation<
+    AxiosResponse<SuccessResponse<OutletSaleOrderReview>>,
+    AxiosError<{ message: string }>,
+    SendReviewDto
+  >({
+    mutationFn: (data: SendReviewDto) => {
+      return axios.post(
+        `${baseUrl}/api/v1/outlet-sale-orders/${params.orderId}/review`,
+        {
+          ...data,
+        }
+      );
+    },
+    onSuccess: (data) => {
+      const successMessage = data.data.message ?? "Ulasan terkirim";
+      toast.success(successMessage);
+      refetch();
+    },
+    onError: (error) => {
+      const errorMessage = error.response?.data.message ?? "Terjadi kesalahan";
+      toast.error(errorMessage);
+    },
+  });
+
+  const onSendReview = ({
+    review,
+    rating,
+  }: {
+    review: string | null;
+    rating: number;
+  }) => {
+    if (!rating) {
+      toast.error("Masukkan penilaian");
+      return;
+    }
+    sendReviewMutation.mutate({
+      review,
+      rating,
+    });
+  };
+  // --Review
 
   return (
     <html lang="en" data-theme="lofi">
@@ -480,6 +547,8 @@ export default function OrderDetail() {
                   <div className="card-body p-4">
                     <Payment
                       orderId={data.data.data.id}
+                      cvBankAccount={outletCvBankAccountQuery.data?.data.data}
+                      cvBankAccountQuery={outletCvBankAccountQuery}
                       onSuccessPayment={() => {
                         refetch();
                       }}
@@ -564,6 +633,13 @@ export default function OrderDetail() {
                   </div>
                 </div>
               </div>
+              {data?.data.data?.status == "finish" ? (
+                <Review
+                  orderReview={data?.data.data?.review}
+                  onSendReview={onSendReview}
+                  isPendingMutation={sendReviewMutation.isPending}
+                />
+              ) : null}
               <div>
                 {data?.data.data?.status == "pending" ||
                 data?.data.data?.status == "waiting_payment" ? (
