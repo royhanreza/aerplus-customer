@@ -138,6 +138,8 @@ export default function Order() {
       recipient_name: customer?.name ?? null,
       recipient_phone: customer?.phone ?? null,
       recipient_address: customer?.address ?? null,
+      recipient_address_latitude: customer?.latitude ?? null,
+      recipient_address_longitude: customer?.longitude ?? null,
     });
   };
 
