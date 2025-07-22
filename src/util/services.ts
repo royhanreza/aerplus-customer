@@ -3,7 +3,7 @@
 let apiUrl: string = "https://aerplus.arenzha.xyz";
 // export const apiUrl: string = ;
 if (process.env.NEXT_PUBLIC_MODE == "production") {
-  apiUrl = "https://aerplus.src-group.net";
+  apiUrl = "https://aerplus2.src-group.net";
 }
 export const baseUrl: string = apiUrl;
 
