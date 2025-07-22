@@ -95,6 +95,8 @@ export interface OutletSaleOrder {
   received_at: string | null;
   paid_at: string | null;
   finished_at: string | null;
+  canceled_at: string | null;
+  delivery_cancel_reason: string | null;
   customer: Customer | null;
   outlet: Outlet | null;
   items: OutletSaleOrderItem[];
@@ -137,6 +139,8 @@ export interface OutletSaleOrderDto {
   recipient_name: string | null;
   recipient_phone: string | null;
   recipient_address: string | null;
+  recipient_address_latitude: string | null;
+  recipient_address_longitude: string | null;
   goods: OutletSaleOrderItemDto[];
 }
 

@@ -262,6 +262,16 @@ export default function OrderDetail() {
     return dayjs(date).format("DD MMM YYYY H:mm").toString();
   }, [data]);
 
+  const formattedCanceledAt = useMemo<string>(() => {
+    const date = data?.data.data?.canceled_at;
+
+    if (!date || !dayjs(date).isValid) {
+      return "-";
+    }
+
+    return dayjs(date).format("DD MMM YYYY H:mm").toString();
+  }, [data]);
+
   // --Finish
   const [isOpenFinishDialog, setIsOpenFinishDialog] = useState(false);
 
@@ -631,6 +641,20 @@ export default function OrderDetail() {
                     <div className="text-xs">Waktu Pesanan Selesai</div>
                     <div className="text-xs">{formattedFinishedAt}</div>
                   </div>
+                  {data?.data.data?.status == "cancel" ? (
+                    <>
+                      <div className="flex justify-between items-center px-4">
+                        <div className="text-xs">Waktu Dibatalkan</div>
+                        <div className="text-xs">{formattedCanceledAt}</div>
+                      </div>
+                      <div className="flex justify-between items-center px-4">
+                        <div className="text-xs">Alasan Pembatalan</div>
+                        <div className="text-xs">
+                          {data?.data?.data?.delivery_cancel_reason}
+                        </div>
+                      </div>
+                    </>
+                  ) : null}
                 </div>
               </div>
               {data?.data.data?.status == "finish" ? (

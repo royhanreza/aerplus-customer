@@ -110,13 +110,21 @@ export default function MyProfile() {
                 <div>Titik Kirim</div>
               </div>
               <div className="p-4 text-xs">
-                <div className="mb-4">
-                  <img
-                    src={`https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/pin-s+FF0000(${customer?.longitude},${customer?.latitude}),pin-m+0000FF(${customer?.longitude},${customer?.latitude})/${customer?.longitude},${customer?.latitude},18,0/1200x800?access_token=pk.eyJ1Ijoia2l0dG9rYXR0byIsImEiOiJja2t5eTducm4wYmhwMnFwNXI4ejA4cGhuIn0.xoSKS41bJtuetZ8v5p_aiQ`}
-                    alt="Lokasi Customer"
-                    className="rounded-sm"
-                  />
-                </div>
+                {customer?.latitude && customer?.longitude ? (
+                  <div className="mb-4">
+                    <img
+                      src={`https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/pin-s+FF0000(${customer?.longitude},${customer?.latitude}),pin-m+0000FF(${customer?.longitude},${customer?.latitude})/${customer?.longitude},${customer?.latitude},18,0/1200x800?access_token=pk.eyJ1Ijoia2l0dG9rYXR0byIsImEiOiJja2t5eTducm4wYmhwMnFwNXI4ejA4cGhuIn0.xoSKS41bJtuetZ8v5p_aiQ`}
+                      alt="Lokasi Customer"
+                      className="rounded-sm"
+                    />
+                  </div>
+                ) : (
+                  <div className="text-center mb-4">
+                    <span className="text-sm text-slate-400">
+                      Belum ada titik lokasi
+                    </span>
+                  </div>
+                )}
                 <button
                   className="btn btn-primary w-full"
                   onClick={() => {
