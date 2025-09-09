@@ -92,22 +92,23 @@ export default function MyOrder() {
               </div>
               <div>
                 <button
-                  className="btn btn-circle btn-ghost"
-                  onClick={() => {
-                    // console.log("clicked");
-                    router.push("/order");
-                  }}
-                >
-                  <RiShoppingBasketLine />
-                </button>
-                <button
-                  className="btn btn-circle btn-ghost"
+                  className="btn btn-circle btn-ghost me-3"
                   onClick={() => {
                     // console.log("clicked");
                     router.push("/my-profile");
                   }}
                 >
                   <RiUser3Line />
+                </button>
+                <button
+                  className="btn bg-amber-500 text-white border-none hover:bg-amber-300"
+                  onClick={() => {
+                    // console.log("clicked");
+                    router.push("/order");
+                  }}
+                >
+                  <RiShoppingBasketLine />
+                  <span>Pesan</span>
                 </button>
               </div>
             </div>

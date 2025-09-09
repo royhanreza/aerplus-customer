@@ -95,6 +95,8 @@ export interface OutletSaleOrder {
   received_at: string | null;
   paid_at: string | null;
   finished_at: string | null;
+  canceled_at: string | null;
+  delivery_cancel_reason: string | null;
   customer: Customer | null;
   outlet: Outlet | null;
   items: OutletSaleOrderItem[];
@@ -129,6 +131,7 @@ export interface OutletSaleOrderItemDto {
 export interface OutletSaleOrderDto {
   date: string | null;
   subtotal: number | null;
+  discount: number | null;
   total: number | null;
   payment_method: string | null;
   note: string | null;
@@ -137,6 +140,10 @@ export interface OutletSaleOrderDto {
   recipient_name: string | null;
   recipient_phone: string | null;
   recipient_address: string | null;
+  recipient_address_latitude: string | null;
+  recipient_address_longitude: string | null;
+  member: Member | string | null;
+  voucher: Voucher | string | null;
   goods: OutletSaleOrderItemDto[];
 }
 
@@ -157,4 +164,25 @@ export interface CvBankAccount {
   id: number;
   number: string | null;
   name: string | null;
+}
+
+export interface Member {
+  id: string;
+  user_name: string;
+  phone_number: string;
+  province_id: string;
+  city_id: string;
+  subdistrict_id: string;
+  outlet_id: number;
+  total_point: number | null;
+}
+
+export interface Voucher {
+  value: number;
+  type: "item" | "transaction";
+}
+
+export interface MemberValidationResponse {
+  member: Member;
+  benefit: Voucher;
 }

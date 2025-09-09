@@ -95,7 +95,11 @@ export default function Product() {
                 <h4 className="font-medium">{product.customer_product_name}</h4>
                 <p className="text-gray-500">
                   Rp{" "}
-                  {product.customer_product_sale_price?.toLocaleString("De-de")}
+                  <span>
+                    {product.customer_product_sale_price?.toLocaleString(
+                      "De-de"
+                    )}
+                  </span>
                 </p>
               </div>
               <div className="flex items-center">
