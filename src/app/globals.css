@@ -133,3 +133,40 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+/* Shimmer Animation for Member Section */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%) skewX(-12deg);
+  }
+  40% {
+    transform: translateX(200%) skewX(-12deg);
+  }
+  100% {
+    transform: translateX(200%) skewX(-12deg);
+  }
+}
+
+@keyframes sparkle {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 4s ease-in-out infinite;
+}
+
+.animate-shimmer-delayed {
+  animation: shimmer 4s ease-in-out infinite;
+  animation-delay: 2s;
+}
+
+.animate-sparkle {
+  animation: sparkle 2s ease-in-out infinite;
+}
